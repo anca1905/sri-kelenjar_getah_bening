@@ -1,0 +1,394 @@
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
+:root {
+    /* Brand Colors */
+    --public-primary: #0d9488;   /* Teal (Untuk Pasien) */
+    --public-dark: #0f766e;
+    --public-accent: #f59e0b;    /* Kuning Aksen */
+    --public-bg: #f0fdfa;        /* Background Pasien */
+
+    --primary: #1e3a8a;          /* Navy (Untuk Admin) */
+    --secondary: #0ea5e9;
+    --accent: #f59e0b;
+    
+    /* Backgrounds & Text */
+    --bg-body: #f1f5f9;          /* BG Abu-abu admin */
+    --bg-white: #ffffff;
+    --text-main: #334155;
+    --text-muted: #64748b;
+    
+    /* Borders & Shadows */
+    --border-color: #e2e8f0;
+    --radius: 12px;
+    --radius-btn: 8px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* =========================================
+   2. KOMPONEN UMUM (Buttons & Forms)
+   ========================================= */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--radius-btn);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--public-primary);
+    color: white;
+    box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+}
+.btn-primary:hover { background: var(--public-dark); transform: translateY(-2px); }
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-main);
+}
+.btn-outline:hover { border-color: var(--public-primary); color: var(--public-primary); }
+
+.card {
+    background: var(--bg-white); border-radius: var(--radius);
+    padding: 2rem; border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+/* Forms */
+.form-group { margin-bottom: 1.5rem; }
+.form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-main); }
+.form-input {
+    width: 100%; padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-btn);
+    font-size: 1rem; transition: 0.2s;
+    background: #f8fafc;
+}
+.form-input:focus {
+    border-color: var(--public-primary); outline: none;
+    background: white; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+}
+
+/* Checkbox Gejala Khusus Pasien */
+.checkbox-card {
+    display: flex; align-items: center; padding: 1rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-btn); cursor: pointer; transition: all 0.2s;
+    background: var(--bg-white); font-weight: 500;
+}
+.checkbox-card:hover { border-color: var(--public-primary); background-color: var(--public-bg); }
+.checkbox-card input[type="checkbox"] {
+    width: 18px; height: 18px; margin-right: 15px; accent-color: var(--public-primary);
+}
+
+/* =========================================
+   3. HALAMAN LOGIN
+   ========================================= */
+.login-wrapper {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+}
+.login-card {
+    background: var(--bg-white); padding: 3rem 2.5rem;
+    border-radius: var(--radius); box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%; max-width: 400px; text-align: center;
+}
+
+/* =========================================
+   4. LAYOUT SIDEBAR (ADMIN & PASIEN)
+   ========================================= */
+.admin-layout { display: flex; min-height: 100vh; }
+
+/* Sidebar Umum */
+.sidebar {
+    width: 260px; background: var(--bg-white); border-right: 1px solid var(--border-color);
+    display: flex; flex-direction: column; position: fixed; height: 100%; top: 0; left: 0; z-index: 50;
+}
+.sidebar-header {
+    height: 70px; display: flex; align-items: center; padding: 0 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.brand-logo { font-size: 1.25rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+/* Menu List */
+.sidebar-menu { padding: 1.5rem 1rem; flex: 1; }
+.menu-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-muted); margin-bottom: 0.5rem; padding-left: 0.8rem; font-weight: 600;
+}
+.sidebar-menu li a {
+    display: flex; align-items: center; padding: 12px 1rem; margin-bottom: 5px;
+    color: var(--text-muted); border-radius: 8px; transition: all 0.2s; font-weight: 500; gap: 12px;
+}
+.sidebar-menu li a i { width: 20px; text-align: center; font-size: 1.1rem; }
+.sidebar-menu li a:hover, .sidebar-menu li a.active {
+    background-color: #eff6ff; color: var(--primary);
+}
+
+.sidebar-footer { padding: 1rem; border-top: 1px solid var(--border-color); }
+.btn-logout {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-logout:hover { background: #fee2e2 !important; color: #ef4444 !important; border-color: #ef4444 !important; }
+
+/* --- SIDEBAR KHUSUS PASIEN (TEAL) --- */
+.sidebar-pasien { background: var(--public-primary); border-right: none; }
+.sidebar-pasien .sidebar-menu li a { color: rgba(255,255,255,0.8); }
+.sidebar-pasien .sidebar-menu li a:hover, .sidebar-pasien .sidebar-menu li a.active {
+    background: rgba(255,255,255,0.2); color: white; border-left: 4px solid var(--public-accent);
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    margin-left: 260px; flex: 1; display: flex; flex-direction: column; background: var(--bg-body);
+}
+.topbar {
+    height: 70px; background: var(--bg-white); border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 2rem;
+    position: sticky; top: 0; z-index: 40;
+}
+.content-wrapper { padding: 2rem; }
+
+/* =========================================
+   5. DASHBOARD ADMIN KHUSUS (STATISTIK)
+   ========================================= */
+.page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main); }
+.page-subtitle { color: var(--text-muted); margin-bottom: 2rem; }
+
+.stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem; margin-bottom: 2rem;
+}
+.stat-card { display: flex; justify-content: space-between; align-items: start; padding: 1.5rem; }
+.stat-title { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; font-weight: 600;}
+.stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
+.stat-trend { font-size: 0.8rem; padding: 3px 8px; border-radius: 6px; display: inline-block; font-weight: 600; }
+.trend-up { background: #dcfce7; color: #166534; } 
+.trend-down { background: #fee2e2; color: #991b1b; } 
+
+.stat-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.bg-teal-light { background: #ccfbf1; color: var(--public-primary); }
+.bg-blue-light { background: #dbeafe; color: var(--primary); }
+.bg-orange-light { background: #ffedd5; color: var(--accent); }
+
+.dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+@media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; padding: 12px 0; color: var(--text-muted); font-size: 0.85rem; border-bottom: 1px solid var(--border-color); }
+.table td { padding: 15px 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+.status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.status-success { background: #dcfce7; color: #166534; }
+.status-pending { background: #fef3c7; color: #b45309; }
+
+/* =========================================
+   6. HERO SECTION (LANDING PAGE)
+   ========================================= */
+.hero-section {
+    padding: 2rem 0;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 3rem;
+    align-items: center;
+}
+
+@media (max-width: 992px) {
+    .hero-wrapper {
+        flex-direction: column;
+        text-align: center;
+    }
+    .hero-text {
+        order: 2;
+    }
+    .hero-image {
+        order: 1;
+        margin-bottom: 2rem;
+    }
+    .hero-buttons {
+        justify-content: center;
+    }
+}
+
+.hero-text {
+    flex: 1.2;
+}
+
+.hero-image {
+    flex: 0.8;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    border-radius: 20px;
+}
+
+/* =========================================
+   7. RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Layout Adjustments */
+    .admin-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .sidebar-header {
+        justify-content: center;
+    }
+
+    .sidebar-menu {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px;
+        white-space: nowrap;
+        gap: 10px;
+        flex: none;
+    }
+
+    .sidebar-menu .menu-label {
+        display: none;
+    }
+
+    .sidebar-menu li {
+        display: inline-block;
+    }
+
+    .sidebar-menu li a {
+        margin-bottom: 0;
+        padding: 8px 15px;
+    }
+
+    .sidebar-footer {
+        display: none; /* Hide logout from sidebar on mobile, can be in topbar or bottom */
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .topbar {
+        padding: 1rem;
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .content-wrapper {
+        padding: 1rem;
+    }
+    
+    /* Typography */
+    .page-title {
+        font-size: 1.25rem;
+    }
+    
+    .hero-text h1 {
+        font-size: 2.2rem !important;
+    }
+    
+    /* Components */
+    .card {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .hero-card {
+        padding: 2rem 1rem !important;
+    }
+    
+    /* Table Responsiveness */
+    .table-wrapper {
+        overflow-x: auto;
+        background: white;
+        border-radius: 8px;
+        margin: 0 -1rem; /* Expand slightly beyond card padding if needed */
+        padding: 0 1rem;
+    }
+    
+    .table {
+        min-width: 600px; /* Ensure table content is accessible via scroll */
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-text h1 {
+        font-size: 1.8rem !important;
+    }
+    
+    .login-card {
+        padding: 2rem 1rem;
+    }
+
+    .brand-logo {
+        font-size: 1rem;
+    }
+
+    .stat-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+    }
+}
