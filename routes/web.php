@@ -22,6 +22,7 @@ Route::get('/konsultasi/biodata', [KonsultasiController::class, 'biodata'])->nam
 Route::post('/konsultasi/biodata', [KonsultasiController::class, 'simpanBiodata'])->name('konsultasi.biodata.post');
 Route::get('/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi');
 Route::post('/konsultasi', [KonsultasiController::class, 'proses'])->name('konsultasi.proses');
+Route::post('/konsultasi/{kodeSesi}/update-biodata', [KonsultasiController::class, 'updateBiodata'])->name('konsultasi.biodata.update');
 Route::get('/riwayat', [RiwayatPublikController::class, 'index'])->name('riwayat');
 Route::get('/info', [InfoController::class, 'index'])->name('info');
 

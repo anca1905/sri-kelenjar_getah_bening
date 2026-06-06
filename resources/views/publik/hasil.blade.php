@@ -149,6 +149,13 @@
         .biodata-tanggal { display: none; }
         .utama-nama { font-size: 1.25rem; }
     }
+    
+    /* MODAL EDIT BIODATA */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+    .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 450px; padding: 24px; transform: translateY(20px); transition: transform 0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: #1a3c6e; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+    .btn-edit { background: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; color: #475569; cursor: pointer; transition: 0.2s; position: absolute; right: 24px; top: 24px; display: inline-flex; align-items: center; gap: 5px; }
+    .btn-edit:hover { background: #f1f5f9; color: #1a3c6e; border-color: #94a3b8; }
 </style>
 @endpush
 
@@ -186,18 +193,22 @@
 
             {{-- ===== BIODATA ===== --}}
             @if(!empty($biodata))
-            <div class="biodata-card">
+            <div class="biodata-card" style="position: relative;">
+                <button class="btn-edit no-print" onclick="bukaModalEdit()"><i class="bi bi-pencil-square"></i> Edit</button>
                 <div class="biodata-avatar">
                     <i class="bi bi-person-fill"></i>
                 </div>
                 <div>
-                    <div class="biodata-name">{{ $biodata['nama_pasien'] ?? 'Pasien' }}</div>
+                    <div class="biodata-name" id="bio-name-display">{{ $biodata['nama_pasien'] ?? 'Pasien' }}</div>
                     <div class="biodata-meta">
-                        @if(!empty($biodata['umur']))
-                            <span><i class="bi bi-calendar3"></i> {{ $biodata['umur'] }} Tahun</span>
+                        @if(isset($biodata['umur']))
+                            <span><i class="bi bi-calendar3"></i> <span id="bio-age-display">{{ $biodata['umur'] }} Tahun</span></span>
                         @endif
-                        @if(!empty($biodata['jenis_kelamin']))
-                            <span><i class="bi bi-gender-{{ $biodata['jenis_kelamin'] == 'Laki-laki' ? 'male' : 'female' }}"></i> {{ $biodata['jenis_kelamin'] }}</span>
+                        @if(isset($biodata['jenis_kelamin']))
+                            <span>
+                                <i class="bi bi-gender-{{ $biodata['jenis_kelamin'] == 'Laki-laki' ? 'male' : 'female' }}" id="bio-gender-icon"></i> 
+                                <span id="bio-gender-display">{{ $biodata['jenis_kelamin'] }}</span>
+                            </span>
                         @endif
                     </div>
                 </div>
@@ -340,33 +351,50 @@
 {{-- ===== PRINT TEMPLATE ===== --}}
 <div id="printTemplate" style="display: none;">
     <div style="font-family: Arial, sans-serif; max-width: 210mm; margin: 0 auto; padding: 20px; color: #1a1a1a;">
-        {{-- Header Cetak --}}
-        <div style="background: #1a3c6e; color: white; padding: 20px 24px; border-radius: 8px 8px 0 0; margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; margin-bottom: 4px;">Sistem Pakar Penyakit Kelenjar Getah Bening</div>
-                    <div style="font-size: 20px; font-weight: 800; margin-bottom: 2px;">Hasil Diagnosis</div>
-                    <div style="font-size: 11px; opacity: 0.75;">Certainty Factor Method &bull; Forward Chaining</div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 11px; opacity: 0.7; margin-bottom: 4px;">Kode Sesi</div>
-                    <div style="font-family: monospace; font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 6px;">{{ $kodeSesi }}</div>
-                    <div style="font-size: 10px; opacity: 0.7; margin-top: 6px;">{{ now()->format('d F Y, H:i') }} WIB</div>
-                </div>
-            </div>
+        {{-- Header Cetak Resmi --}}
+        <div style="border-bottom: 3px solid #1a1a1a; padding-bottom: 12px; margin-bottom: 2px; text-align: center; position: relative;">
+            <div style="font-size: 26px; font-weight: 900; text-transform: uppercase; color: #1a1a1a;">RUMAH SAKIT / KLINIK UMUM</div>
+            <div style="font-size: 15px; font-weight: 700; color: #333; margin-top: 4px;">INSTALASI REKAM MEDIS & SISTEM PAKAR KESEHATAN</div>
+            <div style="font-size: 12px; color: #444; margin-top: 5px;">Jl. Kesehatan No. 123, Kota Sehat, Provinsi Maju 12345</div>
+            <div style="font-size: 12px; color: #444;">Telp: (021) 123-4567 | Email: info@klinikkesehatan.com | Web: www.klinikkesehatan.com</div>
         </div>
+        <div style="border-bottom: 1px solid #1a1a1a; margin-bottom: 24px;"></div>
 
-        {{-- Divider --}}
-        <div style="height: 4px; background: linear-gradient(to right, #2563a8, #0ea5b0);"></div>
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 18px; font-weight: bold; text-decoration: underline; text-transform: uppercase;">Hasil Analisis Awal Gejala</div>
+            <div style="font-size: 12px; margin-top: 4px;">Nomor Rekam / Sesi: <strong>{{ $kodeSesi }}</strong></div>
+        </div>
 
         {{-- Biodata --}}
         @if(!empty($biodata))
-        <div style="border: 1px solid #e2e8f0; border-top: none; padding: 16px 24px; background: #f8fafc; margin-bottom: 16px; border-radius: 0 0 8px 8px;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+        <div style="margin-bottom: 24px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <tr>
-                    <td style="width: 33%; padding: 4px 0;"><strong style="color: #64748b; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">Nama Pasien</strong><br><span style="font-size: 14px; font-weight: 700; color: #1a3c6e;">{{ $biodata['nama_pasien'] ?? '-' }}</span></td>
-                    <td style="width: 20%; padding: 4px 0;"><strong style="color: #64748b; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">Umur</strong><br><span style="font-size: 14px; font-weight: 700; color: #1a3c6e;">{{ $biodata['umur'] ?? '-' }} Tahun</span></td>
-                    <td style="width: 25%; padding: 4px 0;"><strong style="color: #64748b; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px;">Jenis Kelamin</strong><br><span style="font-size: 14px; font-weight: 700; color: #1a3c6e;">{{ $biodata['jenis_kelamin'] ?? '-' }}</span></td>
+                    <td style="width: 15%; padding: 4px 0; font-weight: bold;">Nama Pasien</td>
+                    <td style="width: 2%; padding: 4px 0;">:</td>
+                    <td style="width: 33%; padding: 4px 0;" id="print-bio-name">{{ $biodata['nama_pasien'] ?? '-' }}</td>
+                    
+                    <td style="width: 15%; padding: 4px 0; font-weight: bold;">Tanggal Periksa</td>
+                    <td style="width: 2%; padding: 4px 0;">:</td>
+                    <td style="width: 33%; padding: 4px 0;">{{ now()->format('d F Y') }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px 0; font-weight: bold;">Umur</td>
+                    <td style="padding: 4px 0;">:</td>
+                    <td style="padding: 4px 0;" id="print-bio-age">{{ isset($biodata['umur']) ? $biodata['umur'] . ' Tahun' : '-' }}</td>
+                    
+                    <td style="padding: 4px 0; font-weight: bold;">Waktu</td>
+                    <td style="padding: 4px 0;">:</td>
+                    <td style="padding: 4px 0;">{{ now()->format('H:i') }} WIB</td>
+                </tr>
+                <tr>
+                    <td style="padding: 4px 0; font-weight: bold;">Jenis Kelamin</td>
+                    <td style="padding: 4px 0;">:</td>
+                    <td style="padding: 4px 0;" id="print-bio-gender">{{ $biodata['jenis_kelamin'] ?? '-' }}</td>
+                    
+                    <td style="padding: 4px 0; font-weight: bold;">Metode Analisis</td>
+                    <td style="padding: 4px 0;">:</td>
+                    <td style="padding: 4px 0;">Certainty Factor</td>
                 </tr>
             </table>
         </div>
@@ -447,8 +475,110 @@
     </div>
 </div>
 
+{{-- MODAL EDIT BIODATA --}}
+<div id="modalEdit" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-title">Edit Biodata Pasien</div>
+        <form id="formEditBiodata" onsubmit="simpanEditBiodata(event)">
+            @csrf
+            <div style="margin-bottom: 16px;">
+                <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem;">Nama Lengkap</label>
+                <input type="text" name="nama_pasien" id="edit_nama_pasien" value="{{ $biodata['nama_pasien'] ?? '' }}" required style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem;">Umur (Tahun)</label>
+                <input type="number" name="umur" id="edit_umur" value="{{ $biodata['umur'] ?? '' }}" required min="1" style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; margin-bottom:6px; font-weight:600; font-size:0.9rem;">Jenis Kelamin</label>
+                <select name="jenis_kelamin" id="edit_jenis_kelamin" required style="width:100%; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem; background:#fff;">
+                    <option value="Laki-laki" {{ ($biodata['jenis_kelamin'] ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan" {{ ($biodata['jenis_kelamin'] ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="tutupModalEdit()" style="background:#f1f5f9; color:#475569; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Batal</button>
+                <button type="submit" id="btnSimpanBiodata" style="background:#1a3c6e; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:600; cursor:pointer;">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+    // Modal Edit Biodata
+    function bukaModalEdit() {
+        const modal = document.getElementById('modalEdit');
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.style.opacity = '1';
+            modal.querySelector('.modal-content').style.transform = 'translateY(0)';
+        }, 10);
+    }
+
+    function tutupModalEdit() {
+        const modal = document.getElementById('modalEdit');
+        modal.style.opacity = '0';
+        modal.querySelector('.modal-content').style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
+
+    function simpanEditBiodata(e) {
+        e.preventDefault();
+        const form = e.target;
+        const btn = document.getElementById('btnSimpanBiodata');
+        const formData = new FormData(form);
+        
+        btn.disabled = true;
+        btn.innerText = 'Menyimpan...';
+
+        fetch('{{ route("konsultasi.biodata.update", $kodeSesi) }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': formData.get('_token'),
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                // Update tampilan biodata di card
+                document.getElementById('bio-name-display').innerText = data.data.nama_pasien;
+                document.getElementById('bio-age-display').innerText = data.data.umur + ' Tahun';
+                document.getElementById('bio-gender-display').innerText = data.data.jenis_kelamin;
+                
+                const iconClass = data.data.jenis_kelamin === 'Laki-laki' ? 'bi-gender-male' : 'bi-gender-female';
+                document.getElementById('bio-gender-icon').className = 'bi ' + iconClass;
+                
+                // Update tampilan biodata di print template
+                document.getElementById('print-bio-name').innerText = data.data.nama_pasien;
+                document.getElementById('print-bio-age').innerText = data.data.umur + ' Tahun';
+                document.getElementById('print-bio-gender').innerText = data.data.jenis_kelamin;
+                
+                tutupModalEdit();
+                
+                // Animasi flash background singkat
+                const card = document.querySelector('.biodata-card');
+                card.style.transition = 'background 0.3s';
+                card.style.background = '#dcfce7';
+                setTimeout(() => card.style.background = 'white', 500);
+            } else {
+                alert('Gagal menyimpan biodata');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan jaringan.');
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerText = 'Simpan Perubahan';
+        });
+    }
+
     // Animasi progress bar
     window.addEventListener('load', function() {
         const bar = document.getElementById('cfBar');
@@ -468,10 +598,10 @@
             <html lang="id">
             <head>
                 <meta charset="UTF-8">
-                <title>Hasil Diagnosis — ${document.title}</title>
+                <title>Cetak Hasil Diagnosis</title>
                 <style>
                     * { box-sizing: border-box; margin: 0; padding: 0; }
-                    body { font-family: Arial, sans-serif; background: white; color: #1a1a1a; }
+                    body { font-family: "Times New Roman", Times, serif; background: white; color: #1a1a1a; }
                     @page { size: A4; margin: 15mm; }
                     @media print { body { padding: 0; } }
                 </style>

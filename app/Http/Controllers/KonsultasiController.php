@@ -31,6 +31,29 @@ class KonsultasiController extends Controller
         return redirect()->route('konsultasi');
     }
 
+    public function updateBiodata(Request $request, $kodeSesi)
+    {
+        $request->validate([
+            'nama_pasien'   => 'required|string|max:255',
+            'umur'          => 'required|integer|min:1|max:150',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+        ]);
+
+        $riwayat = Riwayat::where('kode_sesi', $kodeSesi)->first();
+        if ($riwayat) {
+            $riwayat->update($request->only('nama_pasien', 'umur', 'jenis_kelamin'));
+        }
+
+        session([
+            'biodata' => $request->only('nama_pasien', 'umur', 'jenis_kelamin')
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $request->only('nama_pasien', 'umur', 'jenis_kelamin')
+        ]);
+    }
+
     public function index()
     {
         if (!session()->has('biodata')) {
