@@ -10,7 +10,7 @@ class Gejala extends Model
     use HasFactory;
 
     protected $table = 'gejalas';
-    protected $fillable = ['kode', 'nama', 'kategori'];
+    protected $fillable = ['kode', 'nama'];
 
     public function rules()
     {

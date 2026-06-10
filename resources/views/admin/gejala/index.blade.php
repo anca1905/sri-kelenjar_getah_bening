@@ -3,13 +3,6 @@
 @section('page_title', 'Data Gejala')
 @section('breadcrumb', 'Admin Panel / Data Gejala')
 
-@push('styles')
-<style>
-    .badge-kategori { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 4px; }
-    .badge-kategori i { font-size: 0.8rem; }
-</style>
-@endpush
-
 @section('content')
 <div class="card">
     <div style="display: flex; justify-content: space-between; margin-bottom: 24px; align-items: center; flex-wrap: wrap; gap: 16px;">
@@ -24,16 +17,8 @@
             <i class="bi bi-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted);"></i>
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode atau nama..." class="form-control" style="padding-left: 40px;">
         </div>
-        <div style="max-width: 250px; flex: 1; min-width: 150px;">
-            <select name="kategori" class="form-control" onchange="this.form.submit()">
-                <option value="">Semua Kategori Penyakit</option>
-                @foreach($penyakits as $p)
-                    <option value="{{ $p->nama }}" {{ request('kategori') == $p->nama ? 'selected' : '' }}>{{ $p->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn-outline">Filter</button>
-        @if(request('search') || request('kategori'))
+        <button type="submit" class="btn-outline">Cari</button>
+        @if(request('search'))
             <a href="{{ route('admin.gejala.index') }}" class="btn-outline" style="color: #ef4444; border-color: #fca5a5;"><i class="bi bi-x-lg"></i></a>
         @endif
     </form>
@@ -45,7 +30,6 @@
                     <th style="width: 60px; text-align: center;">No</th>
                     <th style="width: 120px;">Kode Gejala</th>
                     <th>Nama Gejala</th>
-                    <th style="width: 180px;">Kategori Penyakit</th>
                     <th style="width: 120px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -60,20 +44,8 @@
                         <div style="font-weight: 600; color: var(--navy); font-size: 0.95rem;">{{ $g->nama }}</div>
                     </td>
                     <td>
-                        @php
-                            // Generate random-ish color based on string length to make badges look nice
-                            $colors = ['#e0f2fe', '#fce7f3', '#fef3c7', '#e0e7ff', '#dcfce7', '#ffedd5'];
-                            $textColors = ['#0284c7', '#db2777', '#d97706', '#4f46e5', '#16a34a', '#ea580c'];
-                            $idx = strlen($g->kategori) % count($colors);
-                        @endphp
-                        <span class="badge-kategori" style="background: {{ $colors[$idx] }}; color: {{ $textColors[$idx] }};">
-                            <i class="bi bi-tag-fill"></i>
-                            {{ $g->kategori }}
-                        </span>
-                    </td>
-                    <td>
                         <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editData({{ $g->id }}, '{{ $g->kode }}', '{{ addslashes($g->nama) }}', '{{ $g->kategori }}')">
+                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editData({{ $g->id }}, '{{ $g->kode }}', '{{ addslashes($g->nama) }}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <form action="{{ route('admin.gejala.destroy', $g->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus gejala ini beserta semua aturan yang terkait?');" style="margin: 0;">
@@ -88,7 +60,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5">
+                    <td colspan="4">
                         <div class="empty-state">
                             <i class="bi bi-thermometer-half"></i>
                             <h4>Belum Ada Data Gejala</h4>
@@ -127,15 +99,6 @@
                     <label class="form-label">Nama Gejala <span style="color:#ef4444;">*</span></label>
                     <input type="text" name="nama" class="form-control" required placeholder="Contoh: Demam tinggi">
                 </div>
-                <div>
-                    <label class="form-label">Kategori Penyakit <span style="color:#ef4444;">*</span></label>
-                    <select name="kategori" class="form-control" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach($penyakits as $p)
-                            <option value="{{ $p->nama }}">{{ $p->nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" onclick="closeModal('addModal')">Batal</button>
@@ -163,14 +126,6 @@
                 <div style="margin-bottom: 20px;">
                     <label class="form-label">Nama Gejala <span style="color:#ef4444;">*</span></label>
                     <input type="text" name="nama" id="edit_nama" class="form-control" required>
-                </div>
-                <div>
-                    <label class="form-label">Kategori Penyakit <span style="color:#ef4444;">*</span></label>
-                    <select name="kategori" id="edit_kategori" class="form-control" required>
-                        @foreach($penyakits as $p)
-                            <option value="{{ $p->nama }}">{{ $p->nama }}</option>
-                        @endforeach
-                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -201,11 +156,10 @@
         }, 300);
     }
     
-    function editData(id, kode, nama, kategori) {
+    function editData(id, kode, nama) {
         document.getElementById('editForm').action = "{{ url('admin/gejala') }}/" + id;
         document.getElementById('edit_kode').value = kode;
         document.getElementById('edit_nama').value = nama;
-        document.getElementById('edit_kategori').value = kategori;
         openModal('editModal');
     }
 </script>

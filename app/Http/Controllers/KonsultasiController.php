@@ -60,7 +60,7 @@ class KonsultasiController extends Controller
             return redirect()->route('konsultasi.biodata')->with('info', 'Silakan isi biodata terlebih dahulu sebelum memulai konsultasi.');
         }
 
-        $gejalas = Gejala::orderBy('kode')->get()->groupBy('kategori');
+        $gejalas = Gejala::orderBy('kode')->get();
         return view('publik.konsultasi', compact('gejalas'));
     }
 

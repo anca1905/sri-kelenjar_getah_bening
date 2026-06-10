@@ -61,13 +61,10 @@
                     <form id="formDiagnosa" method="POST" action="{{ route('konsultasi.proses') }}">
                         @csrf
 
-                        @foreach($gejalas as $kategori => $items)
-                        <div class="kategori-label">{{ $kategori }}</div>
-
-                        @foreach($items as $idx => $gejala)
+                        @foreach($gejalas as $idx => $gejala)
                         <div class="gejala-row">
                             <div class="gejala-label">
-                                <span class="gejala-no">{{ $loop->parent->iteration * 10 + $loop->iteration }}</span>
+                                <span class="gejala-no">{{ $loop->iteration }}</span>
                                 <div>
                                     <div class="gejala-nama">{{ $gejala->nama }}</div>
                                     <div class="gejala-desc">Kode: {{ $gejala->kode }}</div>
@@ -81,7 +78,6 @@
                                 <option value="0.0" {{ old('gejala_'.$gejala->id) == '0.0' ? 'selected' : '' }}>Tidak Ada</option>
                             </select>
                         </div>
-                        @endforeach
                         @endforeach
 
                         <div class="py-3 d-flex gap-2 flex-wrap">

@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('kode', 10)->unique(); // G001, G002, ...
             $table->string('nama');
-            $table->enum('kategori', ['Gejala Umum', 'Gejala Tambahan'])->default('Gejala Umum');
             $table->timestamps();
         });
     }
