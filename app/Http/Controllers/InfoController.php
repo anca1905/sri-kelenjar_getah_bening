@@ -8,7 +8,7 @@ class InfoController extends Controller
 {
     public function index()
     {
-        $penyakits = Penyakit::all();
+        $penyakits = Penyakit::orderBy('nama')->get();
         return view('publik.info', compact('penyakits'));
     }
 }

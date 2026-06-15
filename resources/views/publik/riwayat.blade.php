@@ -85,6 +85,21 @@
     }
     .btn-detail:hover { background: #c9daf8; }
 
+    .btn-print {
+        background: #fff;
+        color: #1a3c6e;
+        border: 1px solid #1a3c6e;
+        border-radius: 5px;
+        padding: 5px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex; align-items: center; gap: 5px;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-print:hover { background: #1a3c6e; color: #fff; }
+
     /* Detail Panel */
     .detail-row { display: none; }
     .detail-row.open { display: table-row; }
@@ -234,7 +249,10 @@
                             {{ $r->created_at->format('d M Y') }}<br>
                             <span style="font-size:0.76rem;">{{ $r->created_at->format('H:i') }} WIB</span>
                         </td>
-                        <td data-label="Detail" style="text-align:center;">
+                        <td data-label="Detail" style="text-align:center; display:flex; gap:5px; justify-content:center;">
+                            <a href="{{ route('riwayat.cetak', $r->id) }}" target="_blank" class="btn-print" title="Cetak Konsultasi">
+                                <i class="bi bi-printer"></i> Cetak
+                            </a>
                             <button class="btn-detail" onclick="toggleDetail('detail-{{ $r->id }}', this)">
                                 <i class="bi bi-chevron-down"></i> Lihat
                             </button>

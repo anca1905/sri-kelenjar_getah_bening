@@ -33,6 +33,7 @@ class PengetahuanController extends Controller
             'penyakit_id' => 'required|exists:penyakits,id',
             'gejala_id'   => 'required|exists:gejalas,id',
             'mb'          => 'required|numeric|min:0|max:1',
+            'md'          => 'required|numeric|min:0|max:1',
         ], [
             'penyakit_id.required' => 'Penyakit wajib dipilih.',
             'gejala_id.required'   => 'Gejala wajib dipilih.',
@@ -45,8 +46,7 @@ class PengetahuanController extends Controller
             return back()->withErrors(['aturan' => 'Aturan untuk pasangan penyakit dan gejala ini sudah ada.']);
         }
 
-        $data = $request->only('penyakit_id', 'gejala_id', 'mb');
-        $data['md'] = 0; // Otomatis diset 0
+        $data = $request->only('penyakit_id', 'gejala_id', 'mb', 'md');
         Rule::create($data);
         return back()->with('success', 'Aturan CF berhasil ditambahkan.');
     }
@@ -57,10 +57,10 @@ class PengetahuanController extends Controller
             'penyakit_id' => 'required|exists:penyakits,id',
             'gejala_id'   => 'required|exists:gejalas,id',
             'mb'          => 'required|numeric|min:0|max:1',
+            'md'          => 'required|numeric|min:0|max:1',
         ]);
 
-        $data = $request->only('penyakit_id', 'gejala_id', 'mb');
-        $data['md'] = 0; // Otomatis diset 0
+        $data = $request->only('penyakit_id', 'gejala_id', 'mb', 'md');
         $rule->update($data);
         return back()->with('success', 'Aturan CF berhasil diperbarui.');
     }

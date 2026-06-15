@@ -339,60 +339,46 @@
             </div>
             <div class="col-lg-7">
                 <div class="row g-3">
+                    @forelse($penyakits as $p)
                     <div class="col-sm-6">
                         <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-virus2"></i></div>
+                            <div class="penyakit-icon">
+                                @php
+                                    $icons = [
+                                        'non-hodgkin'         => 'bi-shield-exclamation',
+                                        'hodgkin'             => 'bi-lungs',
+                                        'limfadenitis akut'   => 'bi-virus2',
+                                        'limfadenitis kronis' => 'bi-activity',
+                                        'limfadenitis'        => 'bi-virus2',
+                                        'tuberkulosis'        => 'bi-droplet-half',
+                                        'limfedema'           => 'bi-bandaid',
+                                        'limfadenopati'       => 'bi-circle-fill',
+                                        'limfoma'             => 'bi-activity',
+                                    ];
+                                    $icon = 'bi-heart-pulse';
+                                    foreach ($icons as $key => $ic) {
+                                        if (str_contains(strtolower($p->nama), $key)) {
+                                            $icon = $ic;
+                                            break;
+                                        }
+                                    }
+                                @endphp
+                                <i class="bi {{ $icon }}"></i>
+                            </div>
                             <div>
-                                <h6>Limfadenitis Akut</h6>
-                                <p>Peradangan kelenjar getah bening yang terjadi tiba-tiba, biasanya akibat infeksi bakteri atau virus.</p>
+                                <h6>{{ $p->nama }}</h6>
+                                <p>{{ \Illuminate\Support\Str::limit($p->deskripsi, 130) }}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-activity"></i></div>
-                            <div>
-                                <h6>Limfadenitis Kronis</h6>
-                                <p>Pembengkakan kelenjar getah bening yang berlangsung lama, seringkali tanpa rasa sakit yang jelas.</p>
-                            </div>
+                    @empty
+                    <div class="col-12">
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                            Belum ada data penyakit yang dimasukkan ke sistem.
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-lungs"></i></div>
-                            <div>
-                                <h6>Limfoma Hodgkin</h6>
-                                <p>Kanker pada jaringan limfatik dengan ciri khas sel Reed-Sternberg dan pola penyebaran yang khas.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-shield-exclamation"></i></div>
-                            <div>
-                                <h6>Limfoma Non-Hodgkin</h6>
-                                <p>Kelompok kanker limfatik yang lebih beragam, bisa berkembang lambat atau cepat tergantung jenisnya.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-droplet-half"></i></div>
-                            <div>
-                                <h6>Tuberkulosis Limfadenitis</h6>
-                                <p>Infeksi TB yang menyerang kelenjar getah bening, paling sering di area leher.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="penyakit-card">
-                            <div class="penyakit-icon"><i class="bi bi-bandaid"></i></div>
-                            <div>
-                                <h6>Limfedema</h6>
-                                <p>Pembengkakan akibat gangguan aliran cairan limfa, sering terjadi pada tungkai atau lengan.</p>
-                            </div>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>

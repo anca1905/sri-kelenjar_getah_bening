@@ -43,17 +43,14 @@
                     <td style="text-align: center; color: var(--muted); font-weight: 500;">{{ $penyakits->firstItem() + $index }}</td>
                     <td>
                         <div style="font-weight: 700; color: var(--navy); margin-bottom: 4px;">{{ $p->nama }}</div>
-                        @if($p->kode)
-                        <span style="font-size: 0.75rem; background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-weight: 600; letter-spacing: 0.5px;">{{ $p->kode }}</span>
-                        @endif
                     </td>
                     <td>
-                        <div style="font-size: 0.85rem; line-height: 1.5; color: #475569; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <div style="font-size: 0.85rem; line-height: 1.5; color: #475569;">
                             {{ $p->deskripsi }}
                         </div>
                     </td>
                     <td>
-                        <div style="font-size: 0.85rem; line-height: 1.5; color: #475569; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        <div style="font-size: 0.85rem; line-height: 1.5; color: #475569;">
                             {{ $p->solusi }}
                         </div>
                     </td>

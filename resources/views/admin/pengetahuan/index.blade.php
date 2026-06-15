@@ -38,7 +38,9 @@
                     <th style="width: 60px; text-align: center;">No</th>
                     <th>Penyakit</th>
                     <th>Gejala</th>
-                    <th style="text-align: center; width: 150px;">Nilai CF (MB)</th>
+                    <th style="text-align: center; width: 100px;">MB</th>
+                    <th style="text-align: center; width: 100px;">MD</th>
+                    <th style="text-align: center; width: 120px;">CF Pakar</th>
                     <th style="width: 120px; text-align: center;">Aksi</th>
                 </tr>
             </thead>
@@ -59,9 +61,15 @@
                     <td style="text-align: center;">
                         <span style="font-weight: 700; color: var(--teal); font-size: 1.05rem;">{{ $rule->mb }}</span>
                     </td>
+                    <td style="text-align: center;">
+                        <span style="font-weight: 700; color: #f59e0b; font-size: 1.05rem;">{{ $rule->md }}</span>
+                    </td>
+                    <td style="text-align: center;">
+                        <span style="font-weight: 700; color: #3b82f6; font-size: 1.05rem;">{{ $rule->cf_pakar }}</span>
+                    </td>
                     <td>
                         <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editRule({{ $rule->id }}, {{ $rule->penyakit_id }}, {{ $rule->gejala_id }}, {{ $rule->mb }})">
+                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editRule({{ $rule->id }}, {{ $rule->penyakit_id }}, {{ $rule->gejala_id }}, {{ $rule->mb }}, {{ $rule->md }})">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <form action="{{ route('admin.pengetahuan.destroy', $rule->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus aturan ini?');" style="margin: 0;">
@@ -76,7 +84,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5">
+                    <td colspan="7">
                         <div class="empty-state">
                             <i class="bi bi-diagram-2"></i>
                             <h4>Belum Ada Aturan</h4>
@@ -124,11 +132,17 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="form-label">Nilai CF Pakar (MB) <span style="color:#ef4444;">*</span></label>
-                    <input type="number" step="0.01" min="0" max="1" name="mb" class="form-control" required placeholder="Contoh: 0.8 (0 sampai 1)">
-                    <small style="color: var(--muted); margin-top: 4px; display: block;">Masukkan tingkat kepastian pakar (0 = tidak pasti sama sekali, 1 = sangat pasti).</small>
+                <div style="display: flex; gap: 16px;">
+                    <div style="flex: 1;">
+                        <label class="form-label">Measure of Belief (MB) <span style="color:#ef4444;">*</span></label>
+                        <input type="number" step="0.01" min="0" max="1" name="mb" class="form-control" required placeholder="Contoh: 0.8">
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="form-label">Measure of Disbelief (MD) <span style="color:#ef4444;">*</span></label>
+                        <input type="number" step="0.01" min="0" max="1" name="md" class="form-control" required placeholder="Contoh: 0.2">
+                    </div>
                 </div>
+                <small style="color: var(--muted); margin-top: 8px; display: block;">Masukkan tingkat kepastian pakar (MB) dan ketidakpastian (MD) dari 0 sampai 1.</small>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn-outline" onclick="closeModal('addModal')">Batal</button>
@@ -165,9 +179,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
-                    <label class="form-label">Nilai CF Pakar (MB) <span style="color:#ef4444;">*</span></label>
-                    <input type="number" step="0.01" min="0" max="1" name="mb" id="edit_mb" class="form-control" required>
+                <div style="display: flex; gap: 16px;">
+                    <div style="flex: 1;">
+                        <label class="form-label">Measure of Belief (MB) <span style="color:#ef4444;">*</span></label>
+                        <input type="number" step="0.01" min="0" max="1" name="mb" id="edit_mb" class="form-control" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label class="form-label">Measure of Disbelief (MD) <span style="color:#ef4444;">*</span></label>
+                        <input type="number" step="0.01" min="0" max="1" name="md" id="edit_md" class="form-control" required>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -198,11 +218,12 @@
         }, 300);
     }
     
-    function editRule(id, penyakit_id, gejala_id, mb) {
+    function editRule(id, penyakit_id, gejala_id, mb, md) {
         document.getElementById('editForm').action = "{{ url('admin/pengetahuan') }}/" + id;
         document.getElementById('edit_penyakit_id').value = penyakit_id;
         document.getElementById('edit_gejala_id').value = gejala_id;
         document.getElementById('edit_mb').value = mb;
+        document.getElementById('edit_md').value = md;
         openModal('editModal');
     }
 </script>

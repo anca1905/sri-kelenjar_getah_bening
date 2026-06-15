@@ -24,6 +24,7 @@ Route::get('/konsultasi', [KonsultasiController::class, 'index'])->name('konsult
 Route::post('/konsultasi', [KonsultasiController::class, 'proses'])->name('konsultasi.proses');
 Route::post('/konsultasi/{kodeSesi}/update-biodata', [KonsultasiController::class, 'updateBiodata'])->name('konsultasi.biodata.update');
 Route::get('/riwayat', [RiwayatPublikController::class, 'index'])->name('riwayat');
+Route::get('/riwayat/{id}/cetak', [RiwayatPublikController::class, 'cetak'])->name('riwayat.cetak');
 Route::get('/info', [InfoController::class, 'index'])->name('info');
 
 /*

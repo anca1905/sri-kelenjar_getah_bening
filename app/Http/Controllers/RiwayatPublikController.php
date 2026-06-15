@@ -12,4 +12,10 @@ class RiwayatPublikController extends Controller
         $riwayats = Riwayat::latest()->paginate(10);
         return view('publik.riwayat', compact('riwayats'));
     }
+
+    public function cetak($id)
+    {
+        $riwayat = Riwayat::findOrFail($id);
+        return view('publik.cetak', compact('riwayat'));
+    }
 }

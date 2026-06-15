@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penyakit;
+
 class BerandaController extends Controller
 {
     public function index()
     {
-        return view('publik.beranda');
+        $penyakits = Penyakit::orderBy('nama')->get();
+        return view('publik.beranda', compact('penyakits'));
     }
 }
+
