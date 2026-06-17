@@ -50,7 +50,7 @@
 
             <div class="info-box">
                 <i class="bi bi-info-circle-fill"></i>
-                <div>Pilih <strong>tingkat keyakinan</strong> Anda terhadap setiap gejala. Semakin akurat isian, semakin mendekati hasil analisis sistem. Pastikan semua pertanyaan dijawab sebelum menekan tombol Analisis.</div>
+                <div>Pilih <strong>tingkat keyakinan</strong> Anda terhadap gejala yang Anda rasakan. Pilih minimal <strong>satu gejala</strong> sebelum menekan tombol Analisis. Gejala yang tidak Anda rasakan tidak perlu dipilih.</div>
             </div>
 
             <div class="form-card">
@@ -70,12 +70,12 @@
                                     <div class="gejala-desc">Kode: {{ $gejala->kode }}</div>
                                 </div>
                             </div>
-                            <select class="form-select-custom" name="gejala_{{ $gejala->id }}" required>
+                            <select class="form-select-custom" name="gejala_{{ $gejala->id }}">
                                 <option value="" selected disabled>-- Pilih --</option>
-                                <option value="1.0" {{ old('gejala_'.$gejala->id) == '1.0' ? 'selected' : '' }}>Sangat Yakin (Pasti Ada)</option>
+                                <option value="1" {{ old('gejala_'.$gejala->id) == '1' ? 'selected' : '' }}>Sangat Yakin</option>
                                 <option value="0.8" {{ old('gejala_'.$gejala->id) == '0.8' ? 'selected' : '' }}>Yakin</option>
-                                <option value="0.4" {{ old('gejala_'.$gejala->id) == '0.4' ? 'selected' : '' }}>Mungkin / Tidak Yakin</option>
-                                <option value="0.0" {{ old('gejala_'.$gejala->id) == '0.0' ? 'selected' : '' }}>Tidak Ada</option>
+                                <option value="0.4" {{ old('gejala_'.$gejala->id) == '0.4' ? 'selected' : '' }}>Cukup yakin</option>
+                                <option value="0.2" {{ old('gejala_'.$gejala->id) == '0.2' ? 'selected' : '' }}>Tidak yakin</option>
                             </select>
                         </div>
                         @endforeach
@@ -89,9 +89,15 @@
                             </button>
                         </div>
 
+                        @if(session('error'))
+                        <div style="color:#c0392b;font-size:0.85rem;margin-bottom:12px;">
+                            <i class="bi bi-exclamation-circle me-1"></i> {{ session('error') }}
+                        </div>
+                        @endif
+
                         @if($errors->any())
                         <div style="color:#c0392b;font-size:0.85rem;margin-bottom:12px;">
-                            <i class="bi bi-exclamation-circle me-1"></i> Harap pilih jawaban untuk semua pertanyaan sebelum melanjutkan.
+                            <i class="bi bi-exclamation-circle me-1"></i> Pilih minimal satu gejala yang Anda rasakan sebelum melanjutkan.
                         </div>
                         @endif
                     </form>
@@ -105,10 +111,10 @@
                     <i class="bi bi-question-circle"></i> Petunjuk Pengisian
                 </div>
                 <div class="p-3" style="font-size:0.85rem;color:#444;line-height:1.7;">
-                    <p><strong>Sangat Yakin / Pasti Ada</strong><br>Gejala ini jelas Anda rasakan dan sudah dipastikan.</p>
+                    <p><strong>Sangat Yakin</strong><br>Gejala ini jelas Anda rasakan dan sudah dipastikan.</p>
                     <p><strong>Yakin</strong><br>Gejala ini Anda rasakan dengan cukup pasti.</p>
-                    <p><strong>Mungkin / Tidak Yakin</strong><br>Gejala ini mungkin ada, tapi Anda ragu-ragu.</p>
-                    <p class="mb-0"><strong>Tidak Ada</strong><br>Gejala ini sama sekali tidak Anda rasakan.</p>
+                    <p><strong>Cukup yakin</strong><br>Gejala ini Anda rasakan, namun masih agak ragu.</p>
+                    <p class="mb-0"><strong>Tidak yakin</strong><br>Gejala ini Anda rasakan tapi sangat ragu.</p>
                 </div>
             </div>
 

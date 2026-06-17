@@ -66,34 +66,31 @@ class KonsultasiController extends Controller
 
     public function proses(Request $request)
     {
-        // Validate that all gejala are answered
+        // Kumpulkan semua gejala yang ada
         $gejalas = Gejala::orderBy('kode')->get();
-        $rules = [];
-        foreach ($gejalas as $g) {
-            $rules['gejala_' . $g->id] = 'required|numeric|min:0|max:1';
-        }
-        $request->validate($rules, array_fill_keys(
-            array_map(fn($k) => $k . '.required', array_keys($rules)),
-            'Semua gejala wajib diisi.'
-        ));
 
-        // Build gejala input: [gejala_id => cf_user]
+        // Validasi minimal ada 1 gejala yang dipilih (nilai > 0)
         $gejalaInput = [];
         foreach ($gejalas as $g) {
-            $gejalaInput[$g->id] = (float) $request->input('gejala_' . $g->id, 0);
+            $val = $request->input('gejala_' . $g->id);
+            $gejalaInput[$g->id] = ($val !== null && $val !== '') ? (float) $val : 0.0;
         }
 
-        // Run CF diagnosis
+        $adaGejala = collect($gejalaInput)->contains(fn($v) => $v > 0);
+        if (!$adaGejala) {
+            return back()->with('error', 'Pilih minimal satu gejala yang Anda rasakan sebelum melanjutkan.')->withInput();
+        }
+
+        // Jalankan diagnosa CF
         $hasil = $this->cfService->diagnosa($gejalaInput);
 
         if (empty($hasil)) {
             return back()->with('info', 'Tidak ada penyakit yang terdeteksi berdasarkan gejala yang dimasukkan.')->withInput();
         }
 
-        // Save to riwayat
         $kodeSesi = $this->cfService->generateKodeSesi();
 
-        // Build detail gejala (for display)
+        // Detail gejala yang dipilih (untuk tampilan hasil)
         $detailGejala = [];
         foreach ($gejalas as $g) {
             $cfVal = $gejalaInput[$g->id];
@@ -101,14 +98,15 @@ class KonsultasiController extends Controller
                 $label = match((string)$cfVal) {
                     '1'   => 'Sangat Yakin',
                     '0.8' => 'Yakin',
-                    '0.4' => 'Mungkin',
+                    '0.4' => 'Cukup yakin',
+                    '0.2' => 'Tidak yakin',
                     default => 'Tidak Ada'
                 };
                 $detailGejala[] = ['kode' => $g->kode, 'nama' => $g->nama, 'cf_user' => $cfVal, 'label' => $label];
             }
         }
 
-        // Build detail hasil
+        // Detail hasil diagnosa
         $detailHasil = array_map(fn($h) => [
             'penyakit'  => $h['penyakit']->nama,
             'cf'        => $h['cf'],
@@ -117,6 +115,7 @@ class KonsultasiController extends Controller
             'solusi'    => $h['penyakit']->solusi,
         ], $hasil);
 
+        // Simpan ke riwayat
         $biodata = session('biodata', []);
         Riwayat::create([
             'kode_sesi'       => $kodeSesi,
@@ -129,10 +128,6 @@ class KonsultasiController extends Controller
             'detail_gejala'   => $detailGejala,
         ]);
 
-        // Opsional: Hapus sesi biodata jika ingin satu kali pakai
-        // session()->forget('biodata');
-
-        // Pass hasil to view
         return view('publik.hasil', compact('hasil', 'kodeSesi', 'detailGejala'));
     }
 }

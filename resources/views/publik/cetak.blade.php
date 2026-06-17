@@ -24,8 +24,8 @@
     <div class="print-container">
         {{-- Header Cetak Resmi --}}
         <div style="border-bottom: 3px solid #1a1a1a; padding-bottom: 12px; margin-bottom: 2px; text-align: center; position: relative;">
-            <div style="font-size: 26px; font-weight: 900; text-transform: uppercase; color: #1a1a1a;">RUMAH SAKIT / KLINIK UMUM</div>
-            <div style="font-size: 15px; font-weight: 700; color: #333; margin-top: 4px;">INSTALASI REKAM MEDIS & SISTEM PAKAR KESEHATAN</div>
+            <div style="font-size: 26px; font-weight: 900; text-transform: uppercase; color: #1a1a1a;">WEBSITE SISTEM PAKAR</div>
+            <div style="font-size: 15px; font-weight: 700; color: #333; margin-top: 4px;">DETEKSI DINI PENYAKIT PADA KELENJAR GETAH BENING</div>
             <div style="font-size: 12px; color: #444; margin-top: 5px;">Jl. Kesehatan No. 123, Kota Sehat, Provinsi Maju 12345</div>
             <div style="font-size: 12px; color: #444;">Telp: (021) 123-4567 | Email: info@klinikkesehatan.com | Web: www.klinikkesehatan.com</div>
         </div>
@@ -53,18 +53,9 @@
                     <td style="padding: 4px 0;">:</td>
                     <td style="padding: 4px 0;">{{ $riwayat->umur ? $riwayat->umur . ' Tahun' : '-' }}</td>
                     
-                    <td style="padding: 4px 0; font-weight: bold;">Waktu</td>
-                    <td style="padding: 4px 0;">:</td>
-                    <td style="padding: 4px 0;">{{ $riwayat->created_at->format('H:i') }} WIB</td>
-                </tr>
-                <tr>
                     <td style="padding: 4px 0; font-weight: bold;">Jenis Kelamin</td>
                     <td style="padding: 4px 0;">:</td>
                     <td style="padding: 4px 0;">{{ $riwayat->jenis_kelamin ?? '-' }}</td>
-                    
-                    <td style="padding: 4px 0; font-weight: bold;">Metode Analisis</td>
-                    <td style="padding: 4px 0;">:</td>
-                    <td style="padding: 4px 0;">Certainty Factor</td>
                 </tr>
             </table>
         </div>
