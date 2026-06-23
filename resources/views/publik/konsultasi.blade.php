@@ -27,7 +27,9 @@
     .btn-reset { background: #fff; color: #555; border: 1px solid #ccc; padding: 10px 20px; border-radius: 5px; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
     .btn-reset:hover { background: #f0f0f0; }
     .kategori-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-top: 12px; margin-bottom: 0; padding: 12px 0 4px; }
-    @media (max-width: 576px) { .gejala-row { grid-template-columns: 1fr; } .page-header h1 { font-size: 1.3rem; } }
+    .form-check-input { width: 1.5em; height: 1.5em; margin-top: 0.25em; vertical-align: top; background-color: #fff; background-repeat: no-repeat; background-position: center; background-size: contain; border: 1px solid rgba(0,0,0,.25); appearance: none; color-adjust: exact; }
+    .form-check-input:checked { background-color: var(--biru); border-color: var(--biru); background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e"); }
+    @media (max-width: 576px) { .gejala-row { grid-template-columns: 1fr auto; } .page-header h1 { font-size: 1.3rem; } }
 </style>
 @endpush
 
@@ -50,7 +52,7 @@
 
             <div class="info-box">
                 <i class="bi bi-info-circle-fill"></i>
-                <div>Pilih <strong>tingkat keyakinan</strong> Anda terhadap gejala yang Anda rasakan. Pilih minimal <strong>satu gejala</strong> sebelum menekan tombol Analisis. Gejala yang tidak Anda rasakan tidak perlu dipilih.</div>
+                <div>Centang gejala yang Anda rasakan. Pilih minimal <strong>tiga gejala</strong> sebelum menekan tombol Analisis. Gejala yang tidak Anda rasakan tidak perlu dicentang.</div>
             </div>
 
             <div class="form-card">
@@ -70,13 +72,9 @@
                                     <div class="gejala-desc">Kode: {{ $gejala->kode }}</div>
                                 </div>
                             </div>
-                            <select class="form-select-custom" name="gejala_{{ $gejala->id }}">
-                                <option value="" selected disabled>-- Pilih --</option>
-                                <option value="1" {{ old('gejala_'.$gejala->id) == '1' ? 'selected' : '' }}>Sangat Yakin</option>
-                                <option value="0.8" {{ old('gejala_'.$gejala->id) == '0.8' ? 'selected' : '' }}>Yakin</option>
-                                <option value="0.4" {{ old('gejala_'.$gejala->id) == '0.4' ? 'selected' : '' }}>Cukup yakin</option>
-                                <option value="0.2" {{ old('gejala_'.$gejala->id) == '0.2' ? 'selected' : '' }}>Tidak yakin</option>
-                            </select>
+                            <div class="form-check d-flex justify-content-end align-items-center">
+                                <input class="form-check-input" type="checkbox" name="gejala_{{ $gejala->id }}" value="1" id="gejala_{{ $gejala->id }}" {{ old('gejala_'.$gejala->id) == '1' ? 'checked' : '' }} style="cursor: pointer; border-radius: 4px;">
+                            </div>
                         </div>
                         @endforeach
 
@@ -97,7 +95,7 @@
 
                         @if($errors->any())
                         <div style="color:#c0392b;font-size:0.85rem;margin-bottom:12px;">
-                            <i class="bi bi-exclamation-circle me-1"></i> Pilih minimal satu gejala yang Anda rasakan sebelum melanjutkan.
+                            <i class="bi bi-exclamation-circle me-1"></i> Pilih minimal tiga gejala yang Anda rasakan sebelum melanjutkan.
                         </div>
                         @endif
                     </form>
@@ -111,10 +109,7 @@
                     <i class="bi bi-question-circle"></i> Petunjuk Pengisian
                 </div>
                 <div class="p-3" style="font-size:0.85rem;color:#444;line-height:1.7;">
-                    <p><strong>Sangat Yakin</strong><br>Gejala ini jelas Anda rasakan dan sudah dipastikan.</p>
-                    <p><strong>Yakin</strong><br>Gejala ini Anda rasakan dengan cukup pasti.</p>
-                    <p><strong>Cukup yakin</strong><br>Gejala ini Anda rasakan, namun masih agak ragu.</p>
-                    <p class="mb-0"><strong>Tidak yakin</strong><br>Gejala ini Anda rasakan tapi sangat ragu.</p>
+                    <p class="mb-0">Centang kotak di sebelah kanan pada gejala yang Anda alami. Pastikan Anda memilih minimal 3 gejala untuk mendapatkan hasil analisis yang akurat.</p>
                 </div>
             </div>
 

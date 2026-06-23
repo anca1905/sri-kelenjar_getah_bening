@@ -224,6 +224,12 @@
                 <div class="utama-label"><i class="bi bi-star-fill me-1"></i> Diagnosis Utama</div>
                 <div class="utama-nama">{{ $utama['penyakit']->nama }}</div>
 
+                @if($utama['penyakit']->foto)
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <img src="{{ asset('storage/' . $utama['penyakit']->foto) }}" alt="Foto {{ $utama['penyakit']->nama }}" style="max-width: 100%; max-height: 300px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+                @endif
+
                 <div class="cf-meter-wrap">
                     <div class="cf-meter-label">
                         <span>Tingkat Keyakinan (Certainty Factor)</span>
@@ -395,6 +401,12 @@
         <div style="border: 2px solid #1a3c6e; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px;">
             <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #0ea5b0; margin-bottom: 6px;">★ Diagnosis Utama</div>
             <div style="font-size: 22px; font-weight: 800; color: #1a3c6e; margin-bottom: 12px;">{{ $utama['penyakit']->nama }}</div>
+
+            @if($utama['penyakit']->foto)
+            <div style="margin-bottom: 16px; text-align: center;">
+                <img src="{{ asset('storage/' . $utama['penyakit']->foto) }}" alt="Foto {{ $utama['penyakit']->nama }}" style="max-width: 100%; max-height: 250px; border-radius: 8px;">
+            </div>
+            @endif
             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
                 <div style="flex: 1; height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
                     <div style="width: {{ $persen }}%; height: 100%; background: linear-gradient(to right, #1a3c6e, #0ea5b0); border-radius: 10px;"></div>

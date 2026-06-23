@@ -10,7 +10,7 @@ class Penyakit extends Model
     use HasFactory;
 
     protected $table = 'penyakits';
-    protected $fillable = ['nama', 'deskripsi', 'solusi'];
+    protected $fillable = ['nama', 'deskripsi', 'solusi', 'foto'];
 
     public function rules()
     {

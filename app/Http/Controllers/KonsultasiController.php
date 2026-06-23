@@ -69,16 +69,17 @@ class KonsultasiController extends Controller
         // Kumpulkan semua gejala yang ada
         $gejalas = Gejala::orderBy('kode')->get();
 
-        // Validasi minimal ada 1 gejala yang dipilih (nilai > 0)
+        // Validasi minimal ada 3 gejala yang dipilih
         $gejalaInput = [];
         foreach ($gejalas as $g) {
             $val = $request->input('gejala_' . $g->id);
-            $gejalaInput[$g->id] = ($val !== null && $val !== '') ? (float) $val : 0.0;
+            // Bobot user adalah 1.0 jika dicentang, 0.0 jika tidak
+            $gejalaInput[$g->id] = ($val !== null && $val == '1') ? 1.0 : 0.0;
         }
 
-        $adaGejala = collect($gejalaInput)->contains(fn($v) => $v > 0);
-        if (!$adaGejala) {
-            return back()->with('error', 'Pilih minimal satu gejala yang Anda rasakan sebelum melanjutkan.')->withInput();
+        $jumlahGejalaDipilih = collect($gejalaInput)->filter(fn($v) => $v > 0)->count();
+        if ($jumlahGejalaDipilih < 3) {
+            return back()->with('error', 'Pilih minimal tiga gejala yang Anda rasakan sebelum melanjutkan.')->withInput();
         }
 
         // Jalankan diagnosa CF
@@ -95,13 +96,7 @@ class KonsultasiController extends Controller
         foreach ($gejalas as $g) {
             $cfVal = $gejalaInput[$g->id];
             if ($cfVal > 0) {
-                $label = match((string)$cfVal) {
-                    '1'   => 'Sangat Yakin',
-                    '0.8' => 'Yakin',
-                    '0.4' => 'Cukup yakin',
-                    '0.2' => 'Tidak yakin',
-                    default => 'Tidak Ada'
-                };
+                $label = 'Dicentang';
                 $detailGejala[] = ['kode' => $g->kode, 'nama' => $g->nama, 'cf_user' => $cfVal, 'label' => $label];
             }
         }
@@ -113,6 +108,7 @@ class KonsultasiController extends Controller
             'cf_persen' => $h['cf_persen'],
             'deskripsi' => $h['penyakit']->deskripsi,
             'solusi'    => $h['penyakit']->solusi,
+            'foto'      => $h['penyakit']->foto,
         ], $hasil);
 
         // Simpan ke riwayat
@@ -122,6 +118,7 @@ class KonsultasiController extends Controller
             'nama_pasien'     => $biodata['nama_pasien'] ?? 'Anonim',
             'umur'            => $biodata['umur'] ?? null,
             'jenis_kelamin'   => $biodata['jenis_kelamin'] ?? null,
+            'penyakit_id'     => $hasil[0]['penyakit']->id,
             'diagnosis_utama' => $hasil[0]['penyakit']->nama,
             'nilai_cf'        => $hasil[0]['cf'],
             'detail_hasil'    => $detailHasil,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Penyakit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PenyakitController extends Controller
 {
@@ -25,11 +26,18 @@ class PenyakitController extends Controller
             'nama'     => 'required|string|max:100|unique:penyakits,nama',
             'deskripsi'=> 'required|string',
             'solusi'   => 'required|string',
+            'foto'     => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'nama.unique' => 'Nama penyakit sudah terdaftar.',
         ]);
 
-        Penyakit::create($request->only('nama', 'deskripsi', 'solusi'));
+        $data = $request->only('nama', 'deskripsi', 'solusi');
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('penyakit_fotos', 'public');
+        }
+
+        Penyakit::create($data);
         return back()->with('success', 'Data penyakit berhasil ditambahkan.');
     }
 
@@ -39,14 +47,27 @@ class PenyakitController extends Controller
             'nama'     => 'required|string|max:100|unique:penyakits,nama,' . $penyakit->id,
             'deskripsi'=> 'required|string',
             'solusi'   => 'required|string',
+            'foto'     => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $penyakit->update($request->only('nama', 'deskripsi', 'solusi'));
+        $data = $request->only('nama', 'deskripsi', 'solusi');
+
+        if ($request->hasFile('foto')) {
+            if ($penyakit->foto) {
+                Storage::disk('public')->delete($penyakit->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('penyakit_fotos', 'public');
+        }
+
+        $penyakit->update($data);
         return back()->with('success', 'Data penyakit berhasil diperbarui.');
     }
 
     public function destroy(Penyakit $penyakit)
     {
+        if ($penyakit->foto) {
+            Storage::disk('public')->delete($penyakit->foto);
+        }
         $penyakit->delete();
         return back()->with('success', 'Data penyakit berhasil dihapus.');
     }

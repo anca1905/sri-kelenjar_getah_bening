@@ -72,6 +72,12 @@
         <div style="border: 2px solid #1a3c6e; border-radius: 10px; padding: 20px 24px; margin-bottom: 16px;">
             <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #0ea5b0; margin-bottom: 6px;">★ Diagnosis Utama</div>
             <div style="font-size: 22px; font-weight: 800; color: #1a3c6e; margin-bottom: 12px;">{{ $utama['penyakit'] }}</div>
+
+            @if(isset($utama['foto']) && $utama['foto'])
+            <div style="margin-bottom: 16px; text-align: center;">
+                <img src="{{ asset('storage/' . $utama['foto']) }}" alt="Foto {{ $utama['penyakit'] }}" style="max-width: 100%; max-height: 250px; border-radius: 8px;">
+            </div>
+            @endif
             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
                 <div style="flex: 1; height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
                     <div style="width: {{ $utama['cf_persen'] }}%; height: 100%; background: linear-gradient(to right, #1a3c6e, #0ea5b0); border-radius: 10px;"></div>

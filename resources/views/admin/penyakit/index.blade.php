@@ -31,6 +31,7 @@
             <thead>
                 <tr>
                     <th style="width: 60px; text-align: center;">No</th>
+                    <th style="width: 80px; text-align: center;">Foto</th>
                     <th>Nama Penyakit</th>
                     <th>Deskripsi Singkat</th>
                     <th>Solusi / Saran Penanganan</th>
@@ -41,6 +42,15 @@
                 @forelse($penyakits as $index => $p)
                 <tr>
                     <td style="text-align: center; color: var(--muted); font-weight: 500;">{{ $penyakits->firstItem() + $index }}</td>
+                    <td style="text-align: center;">
+                        @if($p->foto)
+                            <img src="{{ asset('storage/' . $p->foto) }}" alt="{{ $p->nama }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                        @else
+                            <div style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8; margin: 0 auto;">
+                                <i class="bi bi-image"></i>
+                            </div>
+                        @endif
+                    </td>
                     <td>
                         <div style="font-weight: 700; color: var(--navy); margin-bottom: 4px;">{{ $p->nama }}</div>
                     </td>
@@ -56,7 +66,7 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 8px; justify-content: center;">
-                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editData({{ $p->id }}, '{{ addslashes($p->nama) }}', '{{ addslashes($p->deskripsi) }}', '{{ addslashes($p->solusi) }}')">
+                            <button type="button" class="btn-icon edit" title="Edit Data" onclick="editData({{ $p->id }}, '{{ addslashes($p->nama) }}', '{{ addslashes($p->deskripsi) }}', '{{ addslashes($p->solusi) }}', '{{ $p->foto ? asset('storage/' . $p->foto) : '' }}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <form action="{{ route('admin.penyakit.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penyakit ini beserta semua aturan yang terkait?');" style="margin: 0;">
@@ -71,7 +81,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5">
+                    <td colspan="6">
                         <div class="empty-state">
                             <i class="bi bi-virus"></i>
                             <h4>Belum Ada Data Penyakit</h4>
@@ -98,7 +108,7 @@
             <h3 class="modal-title">Tambah Penyakit Baru</h3>
             <button type="button" class="modal-close" onclick="closeModal('addModal')">&times;</button>
         </div>
-        <form action="{{ route('admin.penyakit.store') }}" method="POST">
+        <form action="{{ route('admin.penyakit.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="modal-body">
                 <div style="margin-bottom: 20px;">
@@ -112,6 +122,10 @@
                 <div>
                     <label class="form-label">Solusi / Saran Penanganan <span style="color:#ef4444;">*</span></label>
                     <textarea name="solusi" class="form-control" rows="3" required placeholder="Saran medis atau penanganan awal..."></textarea>
+                </div>
+                <div style="margin-top: 20px;">
+                    <label class="form-label">Foto Penyakit <span style="color:var(--muted); font-size:0.8rem; font-weight:normal;">(Opsional, max 2MB)</span></label>
+                    <input type="file" name="foto" class="form-control" accept="image/*">
                 </div>
             </div>
             <div class="modal-footer">
@@ -129,7 +143,7 @@
             <h3 class="modal-title">Edit Data Penyakit</h3>
             <button type="button" class="modal-close" onclick="closeModal('editModal')">&times;</button>
         </div>
-        <form id="editForm" method="POST">
+        <form id="editForm" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="modal-body">
@@ -141,9 +155,16 @@
                     <label class="form-label">Deskripsi Penyakit <span style="color:#ef4444;">*</span></label>
                     <textarea name="deskripsi" id="edit_deskripsi" class="form-control" rows="3" required></textarea>
                 </div>
-                <div>
+                <div style="margin-bottom: 20px;">
                     <label class="form-label">Solusi / Saran Penanganan <span style="color:#ef4444;">*</span></label>
                     <textarea name="solusi" id="edit_solusi" class="form-control" rows="3" required></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Foto Penyakit <span style="color:var(--muted); font-size:0.8rem; font-weight:normal;">(Opsional, biarkan kosong jika tidak ingin mengubah)</span></label>
+                    <div id="edit_foto_preview" style="margin-bottom: 10px; display: none;">
+                        <img src="" alt="Preview" style="max-width: 100px; border-radius: 8px;">
+                    </div>
+                    <input type="file" name="foto" class="form-control" accept="image/*">
                 </div>
             </div>
             <div class="modal-footer">
@@ -174,11 +195,20 @@
         }, 300);
     }
     
-    function editData(id, nama, deskripsi, solusi) {
+    function editData(id, nama, deskripsi, solusi, fotoUrl) {
         document.getElementById('editForm').action = "{{ url('admin/penyakit') }}/" + id;
         document.getElementById('edit_nama').value = nama;
         document.getElementById('edit_deskripsi').value = deskripsi;
         document.getElementById('edit_solusi').value = solusi;
+        
+        const preview = document.getElementById('edit_foto_preview');
+        if (fotoUrl) {
+            preview.style.display = 'block';
+            preview.querySelector('img').src = fotoUrl;
+        } else {
+            preview.style.display = 'none';
+        }
+        
         openModal('editModal');
     }
 </script>

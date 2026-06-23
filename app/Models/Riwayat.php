@@ -15,6 +15,7 @@ class Riwayat extends Model
         'nama_pasien',
         'umur',
         'jenis_kelamin',
+        'penyakit_id',
         'diagnosis_utama',
         'nilai_cf',
         'detail_hasil',
@@ -26,4 +27,9 @@ class Riwayat extends Model
         'detail_gejala' => 'array',
         'nilai_cf'      => 'float',
     ];
+
+    public function penyakit()
+    {
+        return $this->belongsTo(Penyakit::class);
+    }
 }
