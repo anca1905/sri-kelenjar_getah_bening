@@ -15,9 +15,14 @@ class PengetahuanController extends Controller
         $search   = $request->get('search', '');
         $penyakitFilter = $request->get('penyakit_id', '');
 
-        $rules = Rule::with(['penyakit', 'gejala'])
-            ->when($penyakitFilter, fn($q) => $q->where('penyakit_id', $penyakitFilter))
-            ->when($search, fn($q) => $q->whereHas('gejala', fn($q2) => $q2->where('nama', 'like', "%{$search}%")))
+        $rules = Rule::select('rules.*')
+            ->join('penyakits', 'penyakits.id', '=', 'rules.penyakit_id')
+            ->join('gejalas', 'gejalas.id', '=', 'rules.gejala_id')
+            ->with(['penyakit', 'gejala'])
+            ->when($penyakitFilter, fn($q) => $q->where('rules.penyakit_id', $penyakitFilter))
+            ->when($search, fn($q) => $q->where('gejalas.nama', 'like', "%{$search}%"))
+            ->orderBy('penyakits.nama')
+            ->orderBy('gejalas.kode')
             ->paginate(10)
             ->withQueryString();
 
@@ -49,6 +54,42 @@ class PengetahuanController extends Controller
         $data = $request->only('penyakit_id', 'gejala_id', 'mb', 'md');
         Rule::create($data);
         return back()->with('success', 'Aturan CF berhasil ditambahkan.');
+    }
+
+    public function getRulesByPenyakit(Penyakit $penyakit)
+    {
+        return response()->json($penyakit->rules()->pluck('mb', 'gejala_id'));
+    }
+
+    public function storeBulk(Request $request)
+    {
+        $request->validate([
+            'penyakit_id' => 'required|exists:penyakits,id',
+            'gejala_id'   => 'nullable|array',
+            'gejala_id.*' => 'exists:gejalas,id',
+            'mb'          => 'nullable|array',
+        ]);
+
+        $penyakitId = $request->penyakit_id;
+        $gejalaIds = $request->gejala_id ?? [];
+        $mbValues = $request->mb ?? [];
+
+        // Hapus rule lama untuk penyakit ini agar direplace dengan yang baru dipilih
+        Rule::where('penyakit_id', $penyakitId)->delete();
+
+        foreach ($gejalaIds as $gId) {
+            $mb = floatval($mbValues[$gId] ?? 0);
+            $md = 1 - $mb;
+            
+            Rule::create([
+                'penyakit_id' => $penyakitId,
+                'gejala_id'   => $gId,
+                'mb'          => $mb,
+                'md'          => $md,
+            ]);
+        }
+
+        return back()->with('success', 'Basis pengetahuan berhasil diatur secara massal.');
     }
 
     public function update(Request $request, Rule $rule)

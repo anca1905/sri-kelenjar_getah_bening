@@ -62,6 +62,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
     // Basis Pengetahuan
     Route::get('/pengetahuan', [PengetahuanController::class, 'index'])->name('pengetahuan.index');
     Route::post('/pengetahuan', [PengetahuanController::class, 'store'])->name('pengetahuan.store');
+    Route::post('/pengetahuan/bulk', [PengetahuanController::class, 'storeBulk'])->name('pengetahuan.store_bulk');
+    Route::get('/pengetahuan/get-rules/{penyakit}', [PengetahuanController::class, 'getRulesByPenyakit'])->name('pengetahuan.get_rules');
     Route::put('/pengetahuan/{rule}', [PengetahuanController::class, 'update'])->name('pengetahuan.update');
     Route::delete('/pengetahuan/{rule}', [PengetahuanController::class, 'destroy'])->name('pengetahuan.destroy');
 
