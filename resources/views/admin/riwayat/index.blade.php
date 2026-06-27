@@ -188,7 +188,10 @@
             .then(data => {
                 let gejalaHtml = '';
                 if (data.detail_gejala && Array.isArray(data.detail_gejala)) {
-                    gejalaHtml = data.detail_gejala.map(g => `<span class="gejala-tag">${g.kode} - ${g.nama}</span>`).join('');
+                    gejalaHtml = data.detail_gejala.map(g => {
+                        let labelHtml = g.label ? ` <span style="font-size:0.7rem; background:#1e40af; color:white; padding:1px 5px; border-radius:10px;">${g.label}</span>` : '';
+                        return `<span class="gejala-tag">${g.kode} - ${g.nama}${labelHtml}</span>`;
+                    }).join('');
                 } else {
                     gejalaHtml = '<span style="color:var(--muted); font-style:italic;">Data gejala tidak tersedia</span>';
                 }

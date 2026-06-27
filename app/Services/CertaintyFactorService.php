@@ -40,7 +40,7 @@ class CertaintyFactorService
             $cfPakar = round($rule->mb - $rule->md, 3);
             $cfGabung = $cfPakar * $cfUser;
 
-            if ($cfGabung <= 0) continue;
+            if ($cfGabung == 0) continue;
 
             $pid = $rule->penyakit_id;
             if (!isset($cfPerPenyakit[$pid])) {

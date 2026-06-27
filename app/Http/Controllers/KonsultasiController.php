@@ -73,8 +73,12 @@ class KonsultasiController extends Controller
         $gejalaInput = [];
         foreach ($gejalas as $g) {
             $val = $request->input('gejala_' . $g->id);
-            // Bobot user adalah 1.0 jika dicentang, 0.0 jika tidak
-            $gejalaInput[$g->id] = ($val !== null && $val == '1') ? 1.0 : 0.0;
+            if ($val !== null && $val == '1') {
+                $cfUser = (float) $request->input('cf_' . $g->id, 1.0);
+                $gejalaInput[$g->id] = $cfUser;
+            } else {
+                $gejalaInput[$g->id] = 0.0;
+            }
         }
 
         $jumlahGejalaDipilih = collect($gejalaInput)->filter(fn($v) => $v > 0)->count();
@@ -91,12 +95,16 @@ class KonsultasiController extends Controller
 
         $kodeSesi = $this->cfService->generateKodeSesi();
 
-        // Detail gejala yang dipilih (untuk tampilan hasil)
         $detailGejala = [];
         foreach ($gejalas as $g) {
             $cfVal = $gejalaInput[$g->id];
             if ($cfVal > 0) {
-                $label = 'Dicentang';
+                $label = 'Yakin';
+                if ($cfVal == 1.0) $label = 'Sangat yakin';
+                elseif ($cfVal == 0.8) $label = 'Yakin';
+                elseif ($cfVal == 0.4) $label = 'Cukup yakin';
+                elseif ($cfVal == 0.2) $label = 'Kurang yakin';
+
                 $detailGejala[] = ['kode' => $g->kode, 'nama' => $g->nama, 'cf_user' => $cfVal, 'label' => $label];
             }
         }

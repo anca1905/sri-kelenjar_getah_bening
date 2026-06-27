@@ -72,8 +72,16 @@
                                     <div class="gejala-desc">Kode: {{ $gejala->kode }}</div>
                                 </div>
                             </div>
-                            <div class="form-check d-flex justify-content-end align-items-center">
-                                <input class="form-check-input" type="checkbox" name="gejala_{{ $gejala->id }}" value="1" id="gejala_{{ $gejala->id }}" {{ old('gejala_'.$gejala->id) == '1' ? 'checked' : '' }} style="cursor: pointer; border-radius: 4px;">
+                            <div class="d-flex align-items-center gap-3 justify-content-end">
+                                <select name="cf_{{ $gejala->id }}" id="cf_{{ $gejala->id }}" class="form-select-custom {{ old('gejala_'.$gejala->id) == '1' ? '' : 'd-none' }}" style="width: 150px; padding: 4px 8px;">
+                                    <option value="1" {{ old('cf_'.$gejala->id) == '1' ? 'selected' : '' }}>Sangat yakin</option>
+                                    <option value="0.8" {{ old('cf_'.$gejala->id) == '0.8' ? 'selected' : '' }}>Yakin</option>
+                                    <option value="0.4" {{ old('cf_'.$gejala->id) == '0.4' ? 'selected' : '' }}>Cukup yakin</option>
+                                    <option value="0.2" {{ old('cf_'.$gejala->id) == '0.2' ? 'selected' : '' }}>Kurang yakin</option>
+                                </select>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input" type="checkbox" name="gejala_{{ $gejala->id }}" value="1" id="gejala_{{ $gejala->id }}" {{ old('gejala_'.$gejala->id) == '1' ? 'checked' : '' }} style="cursor: pointer; border-radius: 4px;" onchange="document.getElementById('cf_{{ $gejala->id }}').classList.toggle('d-none', !this.checked)">
+                                </div>
                             </div>
                         </div>
                         @endforeach
